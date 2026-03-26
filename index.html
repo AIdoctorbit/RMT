@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Rutina Mañana">
+<meta name="apple-mobile-web-app-title" content="Rutina Matí">
 <meta name="theme-color" content="#0F6E56">
-<title>Rutina Mañana</title>
+<title>Rutina Matí</title>
 <style>
 :root{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
 @media(prefers-color-scheme:dark){:root{--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333;--green-light:#0F4535}}
@@ -56,15 +56,15 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 <body>
 <div class="app">
   <div class="header">
-    <h1>Rutina Mañana</h1>
-    <p>60 minutos · 8 actividades</p>
+    <h1>Rutina Matí</h1>
+    <p>60 minuts · 8 activitats</p>
   </div>
 
   <div id="main-ui">
-    <div id="alert-banner" class="alert-banner">⏳ Próxima actividad en 30 segundos</div>
+    <div id="alert-banner" class="alert-banner">⏳ Pròxima activitat en 30 segons</div>
 
     <div class="total-bar-wrap">
-      <div class="total-label"><span>Progreso</span><span id="elapsed-label">0 / 60 min</span></div>
+      <div class="total-label"><span>Progrés</span><span id="elapsed-label">0 / 60 min</span></div>
       <div class="total-bar"><div class="total-fill" id="total-fill" style="width:0%"></div></div>
     </div>
 
@@ -87,22 +87,22 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 
   <div class="done-screen" id="done-screen">
     <div class="check">✅</div>
-    <h2>¡Rutina completada!</h2>
-    <p>Has terminado tu primera hora del día</p>
-    <button class="btn btn-play" style="width:100%;margin-top:8px" onclick="resetTimer()">Volver a empezar</button>
+    <h2>Rutina completada!</h2>
+    <p>Has acabat la teva primera hora del dia</p>
+    <button class="btn btn-play" style="width:100%;margin-top:8px" onclick="resetTimer()">Tornar a començar</button>
   </div>
 </div>
 
 <script>
 const acts=[
   {name:'Despertar',dur:2,icon:'☀️'},
-  {name:'Ejercicio',dur:5,icon:'🏃'},
-  {name:'Ducha / WC',dur:20,icon:'🚿'},
-  {name:'Vestirme',dur:5,icon:'👕'},
-  {name:'Preparar desayuno',dur:5,icon:'🥣'},
-  {name:'Desayunar',dur:15,icon:'☕'},
-  {name:'Dientes',dur:2,icon:'🪥'},
-  {name:'Salida',dur:6,icon:'🚪'}
+  {name:'Exercici',dur:5,icon:'🏃'},
+  {name:'Dutxa / WC',dur:20,icon:'🚿'},
+  {name:'Vestir-me',dur:5,icon:'👕'},
+  {name:'Preparar esmorzar',dur:5,icon:'🥣'},
+  {name:'Esmorzar',dur:15,icon:'☕'},
+  {name:'Dents',dur:2,icon:'🪥'},
+  {name:'Sortida',dur:6,icon:'🚪'}
 ];
 const totalSecs=3600;
 let curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false;
@@ -150,7 +150,7 @@ function updateUI(){
   const a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
   document.getElementById('cur-icon').textContent=a.icon;
   document.getElementById('cur-name').textContent=a.name;
-  document.getElementById('cur-dur').textContent=a.dur+' minutos';
+  document.getElementById('cur-dur').textContent=a.dur+' minuts';
   const cd=document.getElementById('countdown');
   cd.textContent=fmt(secsLeft);
   cd.className='countdown'+(secsLeft<=30?' warn':'');
@@ -159,7 +159,7 @@ function updateUI(){
   document.getElementById('total-fill').style.width=(totalElapsed/totalSecs*100)+'%';
   document.getElementById('elapsed-label').textContent=Math.floor(totalElapsed/60)+' / 60 min';
   const ni=document.getElementById('next-info');
-  ni.innerHTML=curIdx+1<acts.length?`Siguiente: <span>${acts[curIdx+1].icon} ${acts[curIdx+1].name}</span>`:'<span>Última actividad</span>';
+  ni.innerHTML=curIdx+1<acts.length?`Següent: <span>${acts[curIdx+1].icon} ${acts[curIdx+1].name}</span>`:'<span>Última activitat</span>';
   updateQueue();
 }
 function tick(){
@@ -167,13 +167,13 @@ function tick(){
   secsLeft--;totalElapsed++;
   if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
     warnedThisAct=true;beepWarn();
-    showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segundos');
+    showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
   }
   if(secsLeft<=0){
     curIdx++;
     if(curIdx>=acts.length){finish();return;}
     secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
-    beepChange();showAlert('▶ Ahora: '+acts[curIdx].icon+' '+acts[curIdx].name);
+    beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
   }
   updateUI();
 }
