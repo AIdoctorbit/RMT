@@ -10,18 +10,19 @@
 <title>Rutina Mañana</title>
 <style>
 :root{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
-@media(prefers-color-scheme:dark){:root{--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333}}
+@media(prefers-color-scheme:dark){:root{--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333;--green-light:#0F4535}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow:hidden}
-.app{display:flex;flex-direction:column;height:100%;height:100dvh;padding:env(safe-area-inset-top,16px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,16px) env(safe-area-inset-left,16px)}
-.header{padding:12px 0 8px;text-align:center}
+html{height:100%;background:var(--bg)}
+body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.app{display:flex;flex-direction:column;min-height:100dvh;padding:env(safe-area-inset-top,16px) 16px calc(env(safe-area-inset-bottom,16px) + 16px) 16px}
+.header{padding:12px 0 8px;text-align:center;flex-shrink:0}
 .header h1{font-size:17px;font-weight:600;letter-spacing:-.3px}
 .header p{font-size:13px;color:var(--text2);margin-top:2px}
-.total-bar-wrap{padding:0 4px;margin-bottom:12px}
+.total-bar-wrap{margin-bottom:12px;flex-shrink:0}
 .total-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:5px}
 .total-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
 .total-fill{height:100%;background:var(--green);border-radius:3px;transition:width 1s linear}
-.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center}
+.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center;flex-shrink:0}
 .act-emoji{font-size:40px;margin-bottom:8px;display:block}
 .act-name{font-size:22px;font-weight:600;letter-spacing:-.5px}
 .act-dur-label{font-size:14px;color:var(--text2);margin-top:2px}
@@ -32,22 +33,21 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .act-fill.warn{background:var(--amber)}
 .next-label{font-size:13px;color:var(--text2)}
 .next-label span{color:var(--text);font-weight:500}
-.alert-banner{background:rgba(239,159,39,.15);border:1px solid rgba(239,159,39,.4);border-radius:12px;padding:10px 14px;font-size:14px;color:#BA7517;margin-bottom:12px;text-align:center;transition:opacity .4s;opacity:0;pointer-events:none}
+.alert-banner{background:rgba(239,159,39,.15);border:1px solid rgba(239,159,39,.4);border-radius:12px;padding:10px 14px;font-size:14px;color:#BA7517;margin-bottom:12px;text-align:center;transition:opacity .4s;opacity:0;pointer-events:none;flex-shrink:0}
 .alert-banner.show{opacity:1}
-.controls{display:flex;gap:10px;margin-bottom:12px}
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-shrink:0}
 .btn{flex:1;padding:14px;border-radius:14px;font-size:16px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:transform .1s}
 .btn:active{transform:scale(0.97)}
 .btn-play{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-play.paused{background:var(--green-dark);border-color:var(--green-dark)}
-.queue{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
-.q-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;font-size:14px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s}
+.queue{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
+.q-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;font-size:15px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s}
 .q-row.done-row{opacity:.3;text-decoration:line-through}
 .q-row.active-row{background:var(--green-light);border-color:var(--green);font-weight:600}
-@media(prefers-color-scheme:dark){.q-row.active-row{background:#0F4535;border-color:var(--green)}}
 .q-row.next-row{opacity:.7}
-.q-row.future-row{opacity:.4}
+.q-row.future-row{opacity:.45}
 .q-dur{margin-left:auto;color:var(--text2);font-size:13px;font-weight:400}
-.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px}
+.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px;padding:2rem 0}
 .done-screen .check{font-size:64px}
 .done-screen h2{font-size:26px;font-weight:700}
 .done-screen p{color:var(--text2);font-size:15px}
@@ -57,7 +57,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 <div class="app">
   <div class="header">
     <h1>Rutina Mañana</h1>
-    <p id="time-label">60 minutos · 8 actividades</p>
+    <p>60 minutos · 8 actividades</p>
   </div>
 
   <div id="main-ui">
@@ -79,7 +79,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
     <div class="controls">
       <button class="btn btn-play" id="btn-play" onclick="togglePlay()">Iniciar</button>
-      <button class="btn" id="btn-reset" onclick="resetTimer()">Reiniciar</button>
+      <button class="btn" onclick="resetTimer()">Reiniciar</button>
     </div>
 
     <div class="queue" id="queue"></div>
@@ -114,8 +114,7 @@ function getAudioCtx(){
   return audioCtx;
 }
 function beep(freq,dur,vol,delay){
-  const ctx=getAudioCtx();
-  const o=ctx.createOscillator(),g=ctx.createGain();
+  const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
   o.connect(g);g.connect(ctx.destination);
   o.type='sine';o.frequency.value=freq;
   g.gain.setValueAtTime(0,ctx.currentTime+(delay||0));
@@ -132,25 +131,20 @@ function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%6
 
 function buildQueue(){
   document.getElementById('queue').innerHTML=acts.map((a,i)=>
-    `<div class="q-row" id="qr-${i}"><span style="font-size:18px">${a.icon}</span><span>${a.name}</span><span class="q-dur">${a.dur} min</span></div>`
+    `<div class="q-row" id="qr-${i}"><span style="font-size:20px">${a.icon}</span><span>${a.name}</span><span class="q-dur">${a.dur} min</span></div>`
   ).join('');
 }
 function updateQueue(){
   acts.forEach((_,i)=>{
     const r=document.getElementById(`qr-${i}`);
-    if(i<curIdx)r.className='q-row done-row';
-    else if(i===curIdx)r.className='q-row active-row';
-    else if(i===curIdx+1)r.className='q-row next-row';
-    else r.className='q-row future-row';
+    r.className='q-row '+(i<curIdx?'done-row':i===curIdx?'active-row':i===curIdx+1?'next-row':'future-row');
   });
 }
-
 function showAlert(msg){
   const b=document.getElementById('alert-banner');
   b.textContent=msg;b.classList.add('show');
   clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('show'),4500);
 }
-
 function updateUI(){
   if(curIdx>=acts.length)return;
   const a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
@@ -168,7 +162,6 @@ function updateUI(){
   ni.innerHTML=curIdx+1<acts.length?`Siguiente: <span>${acts[curIdx+1].icon} ${acts[curIdx+1].name}</span>`:'<span>Última actividad</span>';
   updateQueue();
 }
-
 function tick(){
   if(!running)return;
   secsLeft--;totalElapsed++;
@@ -184,14 +177,12 @@ function tick(){
   }
   updateUI();
 }
-
 function finish(){
   running=false;clearInterval(interval);interval=null;
   beepDone();
   document.getElementById('main-ui').style.display='none';
   document.getElementById('done-screen').style.display='flex';
 }
-
 function togglePlay(){
   getAudioCtx();
   if(!running){
@@ -205,7 +196,6 @@ function togglePlay(){
     document.getElementById('btn-play').classList.remove('paused');
   }
 }
-
 function resetTimer(){
   running=false;clearInterval(interval);interval=null;
   curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;
@@ -216,7 +206,6 @@ function resetTimer(){
   document.getElementById('alert-banner').classList.remove('show');
   buildQueue();updateUI();
 }
-
 buildQueue();updateUI();
 </script>
 </body>
