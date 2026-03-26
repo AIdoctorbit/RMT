@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rutina Mañana">
+<meta name="theme-color" content="#0F6E56">
+<title>Rutina Mañana</title>
+<style>
+:root{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
+@media(prefers-color-scheme:dark){:root{--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100%;height:100dvh;padding:env(safe-area-inset-top,16px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,16px) env(safe-area-inset-left,16px)}
+.header{padding:12px 0 8px;text-align:center}
+.header h1{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.header p{font-size:13px;color:var(--text2);margin-top:2px}
+.total-bar-wrap{padding:0 4px;margin-bottom:12px}
+.total-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:5px}
+.total-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.total-fill{height:100%;background:var(--green);border-radius:3px;transition:width 1s linear}
+.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center}
+.act-emoji{font-size:40px;margin-bottom:8px;display:block}
+.act-name{font-size:22px;font-weight:600;letter-spacing:-.5px}
+.act-dur-label{font-size:14px;color:var(--text2);margin-top:2px}
+.countdown{font-size:72px;font-weight:700;letter-spacing:-3px;margin:16px 0;font-variant-numeric:tabular-nums;color:var(--text)}
+.countdown.warn{color:var(--amber)}
+.act-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-bottom:12px}
+.act-fill{height:100%;background:var(--green);border-radius:5px;transition:width 1s linear}
+.act-fill.warn{background:var(--amber)}
+.next-label{font-size:13px;color:var(--text2)}
+.next-label span{color:var(--text);font-weight:500}
+.alert-banner{background:rgba(239,159,39,.15);border:1px solid rgba(239,159,39,.4);border-radius:12px;padding:10px 14px;font-size:14px;color:#BA7517;margin-bottom:12px;text-align:center;transition:opacity .4s;opacity:0;pointer-events:none}
+.alert-banner.show{opacity:1}
+.controls{display:flex;gap:10px;margin-bottom:12px}
+.btn{flex:1;padding:14px;border-radius:14px;font-size:16px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(0.97)}
+.btn-play{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-play.paused{background:var(--green-dark);border-color:var(--green-dark)}
+.queue{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
+.q-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;font-size:14px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s}
+.q-row.done-row{opacity:.3;text-decoration:line-through}
+.q-row.active-row{background:var(--green-light);border-color:var(--green);font-weight:600}
+@media(prefers-color-scheme:dark){.q-row.active-row{background:#0F4535;border-color:var(--green)}}
+.q-row.next-row{opacity:.7}
+.q-row.future-row{opacity:.4}
+.q-dur{margin-left:auto;color:var(--text2);font-size:13px;font-weight:400}
+.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px}
+.done-screen .check{font-size:64px}
+.done-screen h2{font-size:26px;font-weight:700}
+.done-screen p{color:var(--text2);font-size:15px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Rutina Mañana</h1>
+    <p id="time-label">60 minutos · 8 actividades</p>
+  </div>
+
+  <div id="main-ui">
+    <div id="alert-banner" class="alert-banner">⏳ Próxima actividad en 30 segundos</div>
+
+    <div class="total-bar-wrap">
+      <div class="total-label"><span>Progreso</span><span id="elapsed-label">0 / 60 min</span></div>
+      <div class="total-bar"><div class="total-fill" id="total-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="act-card">
+      <span class="act-emoji" id="cur-icon">☀️</span>
+      <div class="act-name" id="cur-name">—</div>
+      <div class="act-dur-label" id="cur-dur">—</div>
+      <div class="countdown" id="countdown">--:--</div>
+      <div class="act-bar"><div class="act-fill" id="act-fill" style="width:0%"></div></div>
+      <div class="next-label" id="next-info"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-play" id="btn-play" onclick="togglePlay()">Iniciar</button>
+      <button class="btn" id="btn-reset" onclick="resetTimer()">Reiniciar</button>
+    </div>
+
+    <div class="queue" id="queue"></div>
+  </div>
+
+  <div class="done-screen" id="done-screen">
+    <div class="check">✅</div>
+    <h2>¡Rutina completada!</h2>
+    <p>Has terminado tu primera hora del día</p>
+    <button class="btn btn-play" style="width:100%;margin-top:8px" onclick="resetTimer()">Volver a empezar</button>
+  </div>
+</div>
+
+<script>
+const acts=[
+  {name:'Despertar',dur:2,icon:'☀️'},
+  {name:'Ejercicio',dur:5,icon:'🏃'},
+  {name:'Ducha / WC',dur:20,icon:'🚿'},
+  {name:'Vestirme',dur:5,icon:'👕'},
+  {name:'Preparar desayuno',dur:5,icon:'🥣'},
+  {name:'Desayunar',dur:15,icon:'☕'},
+  {name:'Dientes',dur:2,icon:'🪥'},
+  {name:'Salida',dur:6,icon:'🚪'}
+];
+const totalSecs=3600;
+let curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false;
+let audioCtx=null;
+
+function getAudioCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  return audioCtx;
+}
+function beep(freq,dur,vol,delay){
+  const ctx=getAudioCtx();
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.type='sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(0,ctx.currentTime+(delay||0));
+  g.gain.linearRampToValueAtTime(vol||0.3,ctx.currentTime+(delay||0)+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(delay||0)+dur);
+  o.start(ctx.currentTime+(delay||0));
+  o.stop(ctx.currentTime+(delay||0)+dur+0.05);
+}
+function beepWarn(){beep(880,.18,.2,0);beep(880,.18,.2,.25);}
+function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.15);beep(1568,.25,.3,.3);}
+function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.54);}
+
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+
+function buildQueue(){
+  document.getElementById('queue').innerHTML=acts.map((a,i)=>
+    `<div class="q-row" id="qr-${i}"><span style="font-size:18px">${a.icon}</span><span>${a.name}</span><span class="q-dur">${a.dur} min</span></div>`
+  ).join('');
+}
+function updateQueue(){
+  acts.forEach((_,i)=>{
+    const r=document.getElementById(`qr-${i}`);
+    if(i<curIdx)r.className='q-row done-row';
+    else if(i===curIdx)r.className='q-row active-row';
+    else if(i===curIdx+1)r.className='q-row next-row';
+    else r.className='q-row future-row';
+  });
+}
+
+function showAlert(msg){
+  const b=document.getElementById('alert-banner');
+  b.textContent=msg;b.classList.add('show');
+  clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('show'),4500);
+}
+
+function updateUI(){
+  if(curIdx>=acts.length)return;
+  const a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
+  document.getElementById('cur-icon').textContent=a.icon;
+  document.getElementById('cur-name').textContent=a.name;
+  document.getElementById('cur-dur').textContent=a.dur+' minutos';
+  const cd=document.getElementById('countdown');
+  cd.textContent=fmt(secsLeft);
+  cd.className='countdown'+(secsLeft<=30?' warn':'');
+  const fill=document.getElementById('act-fill');
+  fill.style.width=pct+'%';fill.className='act-fill'+(secsLeft<=30?' warn':'');
+  document.getElementById('total-fill').style.width=(totalElapsed/totalSecs*100)+'%';
+  document.getElementById('elapsed-label').textContent=Math.floor(totalElapsed/60)+' / 60 min';
+  const ni=document.getElementById('next-info');
+  ni.innerHTML=curIdx+1<acts.length?`Siguiente: <span>${acts[curIdx+1].icon} ${acts[curIdx+1].name}</span>`:'<span>Última actividad</span>';
+  updateQueue();
+}
+
+function tick(){
+  if(!running)return;
+  secsLeft--;totalElapsed++;
+  if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
+    warnedThisAct=true;beepWarn();
+    showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segundos');
+  }
+  if(secsLeft<=0){
+    curIdx++;
+    if(curIdx>=acts.length){finish();return;}
+    secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
+    beepChange();showAlert('▶ Ahora: '+acts[curIdx].icon+' '+acts[curIdx].name);
+  }
+  updateUI();
+}
+
+function finish(){
+  running=false;clearInterval(interval);interval=null;
+  beepDone();
+  document.getElementById('main-ui').style.display='none';
+  document.getElementById('done-screen').style.display='flex';
+}
+
+function togglePlay(){
+  getAudioCtx();
+  if(!running){
+    running=true;
+    document.getElementById('btn-play').textContent='Pausar';
+    document.getElementById('btn-play').classList.add('paused');
+    if(!interval)interval=setInterval(tick,1000);
+  } else {
+    running=false;
+    document.getElementById('btn-play').textContent='Continuar';
+    document.getElementById('btn-play').classList.remove('paused');
+  }
+}
+
+function resetTimer(){
+  running=false;clearInterval(interval);interval=null;
+  curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;
+  document.getElementById('btn-play').textContent='Iniciar';
+  document.getElementById('btn-play').classList.remove('paused');
+  document.getElementById('main-ui').style.display='block';
+  document.getElementById('done-screen').style.display='none';
+  document.getElementById('alert-banner').classList.remove('show');
+  buildQueue();updateUI();
+}
+
+buildQueue();updateUI();
+</script>
+</body>
+</html>
