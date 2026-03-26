@@ -53,6 +53,10 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 .done-screen .check{font-size:64px}
 .done-screen h2{font-size:26px;font-weight:700;color:var(--text)}
 .done-screen p{color:var(--text2);font-size:15px}
+
+/* iOS audio warning */
+.ios-hint{background:rgba(29,158,117,.1);border:1px solid rgba(29,158,117,.3);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--green-dark);margin-bottom:12px;text-align:center;flex-shrink:0;display:none}
+[data-theme="dark"] .ios-hint{color:var(--green)}
 </style>
 </head>
 <body>
@@ -64,6 +68,7 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
   </div>
 
   <div id="main-ui">
+    <div id="ios-hint" class="ios-hint">🔔 Prem <strong>Iniciar</strong> per activar l'àudio a iOS</div>
     <div id="alert-banner" class="alert-banner">⏳ Pròxima activitat en 30 segons</div>
     <div class="total-bar-wrap">
       <div class="total-label"><span>Progrés</span><span id="elapsed-label">0 / 60 min</span></div>
@@ -104,28 +109,77 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
     {name:'Dents',dur:2,icon:'🪥'},
     {name:'Sortida',dur:6,icon:'🚪'}
   ];
-  var totalSecs=3600,curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false,darkMode=false,audioCtx=null;
+  var totalSecs=3600,curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false,darkMode=false;
+  var audioCtx=null,audioUnlocked=false;
 
+  // ── Detectar iOS ──────────────────────────────────────────────────
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  if(isIOS) document.getElementById('ios-hint').style.display='block';
+
+  // ── AudioContext: crear només un cop i reutilitzar ────────────────
   function getAudioCtx(){
-    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended')audioCtx.resume();
+    if(!audioCtx){
+      audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    }
+    // iOS requereix resume() després de qualsevol interrupció
+    if(audioCtx.state==='suspended'||audioCtx.state==='interrupted'){
+      audioCtx.resume();
+    }
     return audioCtx;
   }
-  function beep(freq,dur,vol,delay){
-    var ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
-    o.type='sine';o.frequency.value=freq;
-    g.gain.setValueAtTime(0,ctx.currentTime+(delay||0));
-    g.gain.linearRampToValueAtTime(vol||0.3,ctx.currentTime+(delay||0)+0.01);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(delay||0)+dur);
-    o.start(ctx.currentTime+(delay||0));
-    o.stop(ctx.currentTime+(delay||0)+dur+0.05);
-  }
-  function beepWarn(){beep(880,.18,.2,0);beep(880,.18,.2,.25);}
-  function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.15);beep(1568,.25,.3,.3);}
-  function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.54);}
 
-  function fmt(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2);}
+  // Desbloqueja l'àudio amb un so silenciós en el primer tap
+  function unlockAudio(){
+    if(audioUnlocked) return;
+    try{
+      var ctx=getAudioCtx();
+      var buf=ctx.createBuffer(1,1,22050);
+      var src=ctx.createBufferSource();
+      src.buffer=buf;src.connect(ctx.destination);
+      src.start(0);
+      audioUnlocked=true;
+      if(isIOS) document.getElementById('ios-hint').style.display='none';
+    }catch(e){}
+  }
+
+  // Reactivar àudio quan la pàgina torna al primer pla
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden && audioCtx){
+      audioCtx.resume();
+    }
+  });
+  // Event addicional per a iOS PWA (pageshow)
+  window.addEventListener('pageshow',function(){
+    if(audioCtx) audioCtx.resume();
+  });
+  // Focus també ajuda
+  window.addEventListener('focus',function(){
+    if(audioCtx) audioCtx.resume();
+  });
+
+  function beep(freq,dur,vol,delay){
+    try{
+      var ctx=getAudioCtx();
+      if(ctx.state==='suspended') return; // Silenci segur si no s'ha desblocat
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';o.frequency.value=freq;
+      var t=ctx.currentTime+(delay||0);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol||0.3,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.start(t);
+      o.stop(t+dur+0.05);
+    }catch(e){}
+  }
+  function beepWarn(){beep(880,.18,.25,0);beep(880,.18,.25,.28);}
+  function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.16);beep(1568,.25,.3,.32);}
+  function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.55);}
+
+  // ── Temporitzador robust: compensació de deriva ───────────────────
+  var tickOrigin=null,tickBase=0;
+
+  function fmt(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+(s%60)).slice(-2);}
 
   function buildQueue(){
     document.getElementById('queue').innerHTML=acts.map(function(a,i){
@@ -160,48 +214,70 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
     ni.innerHTML=curIdx+1<acts.length?'Següent: <span>'+acts[curIdx+1].icon+' '+acts[curIdx+1].name+'</span>':'<span>Última activitat</span>';
     updateQueue();
   }
-  function tick(){
-    if(!running)return;
-    secsLeft--;totalElapsed++;
-    if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
-      warnedThisAct=true;beepWarn();
-      showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
+
+  // Tick amb compensació de deriva (drift-corrected)
+  function scheduleTick(){
+    if(!running) return;
+    var now=Date.now();
+    var elapsed=Math.round((now-tickOrigin)/1000); // segons reals transcorreguts
+    var delta=elapsed-tickBase;                     // quants ticks han passat
+    if(delta<1){
+      // Encara no toca; tornar a programar per quan toca
+      var nextMs=1000-(now-tickOrigin)%1000;
+      interval=setTimeout(scheduleTick,nextMs);
+      return;
     }
-    if(secsLeft<=0){
-      curIdx++;
-      if(curIdx>=acts.length){finish();return;}
-      secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
-      beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
+    // Processa tots els ticks pendents (si el dispositiu ha dormit)
+    for(var i=0;i<delta;i++){
+      tickBase++;
+      secsLeft--;totalElapsed++;
+      if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
+        warnedThisAct=true;beepWarn();
+        showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
+      }
+      if(secsLeft<=0){
+        curIdx++;
+        if(curIdx>=acts.length){finish();return;}
+        secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
+        beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
+      }
     }
     updateUI();
+    // Programa el proper tick exactament quan toca
+    var nextMs=1000-(Date.now()-tickOrigin)%1000;
+    interval=setTimeout(scheduleTick,nextMs||1000);
   }
+
   function finish(){
-    running=false;clearInterval(interval);interval=null;
+    running=false;clearTimeout(interval);interval=null;
     beepDone();
     document.getElementById('main-ui').style.display='none';
     document.getElementById('done-screen').style.display='flex';
   }
   function togglePlay(){
-    getAudioCtx();
+    unlockAudio(); // CRÍTICA: desbloqueja àudio en el tap de l'usuari
     if(!running){
       running=true;
+      tickOrigin=Date.now()-tickBase*1000;
       document.getElementById('btn-play').textContent='Pausar';
       document.getElementById('btn-play').classList.add('paused');
-      if(!interval)interval=setInterval(tick,1000);
+      clearTimeout(interval);
+      scheduleTick();
     } else {
-      running=false;
+      running=false;clearTimeout(interval);interval=null;
       document.getElementById('btn-play').textContent='Continuar';
       document.getElementById('btn-play').classList.remove('paused');
     }
   }
   function resetTimer(){
-    running=false;clearInterval(interval);interval=null;
-    curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;
+    running=false;clearTimeout(interval);interval=null;
+    curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;tickBase=0;tickOrigin=null;
     document.getElementById('btn-play').textContent='Iniciar';
     document.getElementById('btn-play').classList.remove('paused');
     document.getElementById('main-ui').style.display='block';
     document.getElementById('done-screen').style.display='none';
     document.getElementById('alert-banner').classList.remove('show');
+    if(isIOS) document.getElementById('ios-hint').style.display='block';
     buildQueue();updateUI();
   }
   function toggleTheme(){
@@ -212,7 +288,7 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 
   document.getElementById('btn-play').addEventListener('click',togglePlay);
   document.getElementById('btn-reset').addEventListener('click',resetTimer);
-  document.getElementById('btn-repeat').addEventListener('click',resetTimer);
+  document.getElementById('btn-repeat').addEventListener('click',function(){unlockAudio();resetTimer();});
   document.getElementById('btn-theme').addEventListener('click',toggleTheme);
 
   buildQueue();
