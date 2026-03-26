@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="ca" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,22 +9,23 @@
 <meta name="theme-color" content="#0F6E56">
 <title>Rutina Matí</title>
 <style>
-:root{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
-@media(prefers-color-scheme:dark){:root{--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333;--green-light:#0F4535}}
+[data-theme="light"]{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
+[data-theme="dark"]{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#0F4535;--amber:#EF9F27;--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--bg)}
-body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:background .3s,color .3s}
 .app{display:flex;flex-direction:column;min-height:100dvh;padding:env(safe-area-inset-top,16px) 16px calc(env(safe-area-inset-bottom,16px) + 16px) 16px}
-.header{padding:12px 0 8px;text-align:center;flex-shrink:0}
-.header h1{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.header{padding:12px 0 8px;text-align:center;flex-shrink:0;position:relative}
+.header h1{font-size:17px;font-weight:600;letter-spacing:-.3px;color:var(--text)}
 .header p{font-size:13px;color:var(--text2);margin-top:2px}
+.btn-theme{position:absolute;right:0;top:10px;background:none;border:1px solid var(--border);border-radius:10px;padding:5px 9px;font-size:16px;cursor:pointer;line-height:1;color:var(--text)}
 .total-bar-wrap{margin-bottom:12px;flex-shrink:0}
 .total-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:5px}
 .total-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
 .total-fill{height:100%;background:var(--green);border-radius:3px;transition:width 1s linear}
-.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center;flex-shrink:0}
+.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center;flex-shrink:0;transition:background .3s,border-color .3s}
 .act-emoji{font-size:40px;margin-bottom:8px;display:block}
-.act-name{font-size:22px;font-weight:600;letter-spacing:-.5px}
+.act-name{font-size:22px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
 .act-dur-label{font-size:14px;color:var(--text2);margin-top:2px}
 .countdown{font-size:72px;font-weight:700;letter-spacing:-3px;margin:16px 0;font-variant-numeric:tabular-nums;color:var(--text)}
 .countdown.warn{color:var(--amber)}
@@ -36,12 +37,12 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 .alert-banner{background:rgba(239,159,39,.15);border:1px solid rgba(239,159,39,.4);border-radius:12px;padding:10px 14px;font-size:14px;color:#BA7517;margin-bottom:12px;text-align:center;transition:opacity .4s;opacity:0;pointer-events:none;flex-shrink:0}
 .alert-banner.show{opacity:1}
 .controls{display:flex;gap:10px;margin-bottom:12px;flex-shrink:0}
-.btn{flex:1;padding:14px;border-radius:14px;font-size:16px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:transform .1s}
+.btn{flex:1;padding:14px;border-radius:14px;font-size:16px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:transform .1s,background .3s,color .3s}
 .btn:active{transform:scale(0.97)}
 .btn-play{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-play.paused{background:var(--green-dark);border-color:var(--green-dark)}
 .queue{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
-.q-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;font-size:15px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s}
+.q-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;font-size:15px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s,border-color .3s;color:var(--text)}
 .q-row.done-row{opacity:.3;text-decoration:line-through}
 .q-row.active-row{background:var(--green-light);border-color:var(--green);font-weight:600}
 .q-row.next-row{opacity:.7}
@@ -49,7 +50,7 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
 .q-dur{margin-left:auto;color:var(--text2);font-size:13px;font-weight:400}
 .done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px;padding:2rem 0}
 .done-screen .check{font-size:64px}
-.done-screen h2{font-size:26px;font-weight:700}
+.done-screen h2{font-size:26px;font-weight:700;color:var(--text)}
 .done-screen p{color:var(--text2);font-size:15px}
 </style>
 </head>
@@ -58,16 +59,15 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
   <div class="header">
     <h1>Rutina Matí</h1>
     <p>60 minuts · 8 activitats</p>
+    <button class="btn-theme" id="btn-theme">🌙</button>
   </div>
 
   <div id="main-ui">
     <div id="alert-banner" class="alert-banner">⏳ Pròxima activitat en 30 segons</div>
-
     <div class="total-bar-wrap">
       <div class="total-label"><span>Progrés</span><span id="elapsed-label">0 / 60 min</span></div>
       <div class="total-bar"><div class="total-fill" id="total-fill" style="width:0%"></div></div>
     </div>
-
     <div class="act-card">
       <span class="act-emoji" id="cur-icon">☀️</span>
       <div class="act-name" id="cur-name">—</div>
@@ -76,12 +76,10 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
       <div class="act-bar"><div class="act-fill" id="act-fill" style="width:0%"></div></div>
       <div class="next-label" id="next-info"></div>
     </div>
-
     <div class="controls">
-      <button class="btn btn-play" id="btn-play" onclick="togglePlay()">Iniciar</button>
-      <button class="btn" onclick="resetTimer()">Reiniciar</button>
+      <button class="btn btn-play" id="btn-play">Iniciar</button>
+      <button class="btn" id="btn-reset">Reiniciar</button>
     </div>
-
     <div class="queue" id="queue"></div>
   </div>
 
@@ -89,124 +87,136 @@ body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-s
     <div class="check">✅</div>
     <h2>Rutina completada!</h2>
     <p>Has acabat la teva primera hora del dia</p>
-    <button class="btn btn-play" style="width:100%;margin-top:8px" onclick="resetTimer()">Tornar a començar</button>
+    <button class="btn btn-play" id="btn-repeat" style="width:100%;margin-top:8px">Tornar a començar</button>
   </div>
 </div>
 
 <script>
-const acts=[
-  {name:'Despertar',dur:2,icon:'☀️'},
-  {name:'Exercici',dur:5,icon:'🏃'},
-  {name:'Dutxa / WC',dur:20,icon:'🚿'},
-  {name:'Vestir-me',dur:5,icon:'👕'},
-  {name:'Preparar esmorzar',dur:5,icon:'🥣'},
-  {name:'Esmorzar',dur:15,icon:'☕'},
-  {name:'Dents',dur:2,icon:'🪥'},
-  {name:'Sortida',dur:6,icon:'🚪'}
-];
-const totalSecs=3600;
-let curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false;
-let audioCtx=null;
+(function(){
+  var acts=[
+    {name:'Despertar',dur:2,icon:'☀️'},
+    {name:'Exercici',dur:5,icon:'🏃'},
+    {name:'Dutxa / WC',dur:20,icon:'🚿'},
+    {name:'Vestir-me',dur:5,icon:'👕'},
+    {name:'Preparar esmorzar',dur:5,icon:'🥣'},
+    {name:'Esmorzar',dur:15,icon:'☕'},
+    {name:'Dents',dur:2,icon:'🪥'},
+    {name:'Sortida',dur:6,icon:'🚪'}
+  ];
+  var totalSecs=3600,curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false,darkMode=false,audioCtx=null;
 
-function getAudioCtx(){
-  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended')audioCtx.resume();
-  return audioCtx;
-}
-function beep(freq,dur,vol,delay){
-  const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
-  o.connect(g);g.connect(ctx.destination);
-  o.type='sine';o.frequency.value=freq;
-  g.gain.setValueAtTime(0,ctx.currentTime+(delay||0));
-  g.gain.linearRampToValueAtTime(vol||0.3,ctx.currentTime+(delay||0)+0.01);
-  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(delay||0)+dur);
-  o.start(ctx.currentTime+(delay||0));
-  o.stop(ctx.currentTime+(delay||0)+dur+0.05);
-}
-function beepWarn(){beep(880,.18,.2,0);beep(880,.18,.2,.25);}
-function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.15);beep(1568,.25,.3,.3);}
-function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.54);}
-
-function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
-
-function buildQueue(){
-  document.getElementById('queue').innerHTML=acts.map((a,i)=>
-    `<div class="q-row" id="qr-${i}"><span style="font-size:20px">${a.icon}</span><span>${a.name}</span><span class="q-dur">${a.dur} min</span></div>`
-  ).join('');
-}
-function updateQueue(){
-  acts.forEach((_,i)=>{
-    const r=document.getElementById(`qr-${i}`);
-    r.className='q-row '+(i<curIdx?'done-row':i===curIdx?'active-row':i===curIdx+1?'next-row':'future-row');
-  });
-}
-function showAlert(msg){
-  const b=document.getElementById('alert-banner');
-  b.textContent=msg;b.classList.add('show');
-  clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('show'),4500);
-}
-function updateUI(){
-  if(curIdx>=acts.length)return;
-  const a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
-  document.getElementById('cur-icon').textContent=a.icon;
-  document.getElementById('cur-name').textContent=a.name;
-  document.getElementById('cur-dur').textContent=a.dur+' minuts';
-  const cd=document.getElementById('countdown');
-  cd.textContent=fmt(secsLeft);
-  cd.className='countdown'+(secsLeft<=30?' warn':'');
-  const fill=document.getElementById('act-fill');
-  fill.style.width=pct+'%';fill.className='act-fill'+(secsLeft<=30?' warn':'');
-  document.getElementById('total-fill').style.width=(totalElapsed/totalSecs*100)+'%';
-  document.getElementById('elapsed-label').textContent=Math.floor(totalElapsed/60)+' / 60 min';
-  const ni=document.getElementById('next-info');
-  ni.innerHTML=curIdx+1<acts.length?`Següent: <span>${acts[curIdx+1].icon} ${acts[curIdx+1].name}</span>`:'<span>Última activitat</span>';
-  updateQueue();
-}
-function tick(){
-  if(!running)return;
-  secsLeft--;totalElapsed++;
-  if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
-    warnedThisAct=true;beepWarn();
-    showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
+  function getAudioCtx(){
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    return audioCtx;
   }
-  if(secsLeft<=0){
-    curIdx++;
-    if(curIdx>=acts.length){finish();return;}
-    secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
-    beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
+  function beep(freq,dur,vol,delay){
+    var ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(0,ctx.currentTime+(delay||0));
+    g.gain.linearRampToValueAtTime(vol||0.3,ctx.currentTime+(delay||0)+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(delay||0)+dur);
+    o.start(ctx.currentTime+(delay||0));
+    o.stop(ctx.currentTime+(delay||0)+dur+0.05);
   }
-  updateUI();
-}
-function finish(){
-  running=false;clearInterval(interval);interval=null;
-  beepDone();
-  document.getElementById('main-ui').style.display='none';
-  document.getElementById('done-screen').style.display='flex';
-}
-function togglePlay(){
-  getAudioCtx();
-  if(!running){
-    running=true;
-    document.getElementById('btn-play').textContent='Pausar';
-    document.getElementById('btn-play').classList.add('paused');
-    if(!interval)interval=setInterval(tick,1000);
-  } else {
-    running=false;
-    document.getElementById('btn-play').textContent='Continuar';
+  function beepWarn(){beep(880,.18,.2,0);beep(880,.18,.2,.25);}
+  function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.15);beep(1568,.25,.3,.3);}
+  function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.54);}
+
+  function fmt(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2);}
+
+  function buildQueue(){
+    document.getElementById('queue').innerHTML=acts.map(function(a,i){
+      return '<div class="q-row" id="qr-'+i+'"><span style="font-size:20px">'+a.icon+'</span><span>'+a.name+'</span><span class="q-dur">'+a.dur+' min</span></div>';
+    }).join('');
+  }
+  function updateQueue(){
+    acts.forEach(function(_,i){
+      var r=document.getElementById('qr-'+i);
+      r.className='q-row '+(i<curIdx?'done-row':i===curIdx?'active-row':i===curIdx+1?'next-row':'future-row');
+    });
+  }
+  function showAlert(msg){
+    var b=document.getElementById('alert-banner');
+    b.textContent=msg;b.classList.add('show');
+    clearTimeout(b._t);b._t=setTimeout(function(){b.classList.remove('show');},4500);
+  }
+  function updateUI(){
+    if(curIdx>=acts.length)return;
+    var a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
+    document.getElementById('cur-icon').textContent=a.icon;
+    document.getElementById('cur-name').textContent=a.name;
+    document.getElementById('cur-dur').textContent=a.dur+' minuts';
+    var cd=document.getElementById('countdown');
+    cd.textContent=fmt(secsLeft);
+    cd.className='countdown'+(secsLeft<=30?' warn':'');
+    var fill=document.getElementById('act-fill');
+    fill.style.width=pct+'%';fill.className='act-fill'+(secsLeft<=30?' warn':'');
+    document.getElementById('total-fill').style.width=(totalElapsed/totalSecs*100)+'%';
+    document.getElementById('elapsed-label').textContent=Math.floor(totalElapsed/60)+' / 60 min';
+    var ni=document.getElementById('next-info');
+    ni.innerHTML=curIdx+1<acts.length?'Següent: <span>'+acts[curIdx+1].icon+' '+acts[curIdx+1].name+'</span>':'<span>Última activitat</span>';
+    updateQueue();
+  }
+  function tick(){
+    if(!running)return;
+    secsLeft--;totalElapsed++;
+    if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
+      warnedThisAct=true;beepWarn();
+      showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
+    }
+    if(secsLeft<=0){
+      curIdx++;
+      if(curIdx>=acts.length){finish();return;}
+      secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
+      beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
+    }
+    updateUI();
+  }
+  function finish(){
+    running=false;clearInterval(interval);interval=null;
+    beepDone();
+    document.getElementById('main-ui').style.display='none';
+    document.getElementById('done-screen').style.display='flex';
+  }
+  function togglePlay(){
+    getAudioCtx();
+    if(!running){
+      running=true;
+      document.getElementById('btn-play').textContent='Pausar';
+      document.getElementById('btn-play').classList.add('paused');
+      if(!interval)interval=setInterval(tick,1000);
+    } else {
+      running=false;
+      document.getElementById('btn-play').textContent='Continuar';
+      document.getElementById('btn-play').classList.remove('paused');
+    }
+  }
+  function resetTimer(){
+    running=false;clearInterval(interval);interval=null;
+    curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;
+    document.getElementById('btn-play').textContent='Iniciar';
     document.getElementById('btn-play').classList.remove('paused');
+    document.getElementById('main-ui').style.display='block';
+    document.getElementById('done-screen').style.display='none';
+    document.getElementById('alert-banner').classList.remove('show');
+    buildQueue();updateUI();
   }
-}
-function resetTimer(){
-  running=false;clearInterval(interval);interval=null;
-  curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;
-  document.getElementById('btn-play').textContent='Iniciar';
-  document.getElementById('btn-play').classList.remove('paused');
-  document.getElementById('main-ui').style.display='block';
-  document.getElementById('done-screen').style.display='none';
-  document.getElementById('alert-banner').classList.remove('show');
-  buildQueue();updateUI();
-}
-buildQueue();updateUI();
+  function toggleTheme(){
+    darkMode=!darkMode;
+    document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+    document.getElementById('btn-theme').textContent=darkMode?'☀️':'🌙';
+  }
+
+  document.getElementById('btn-play').addEventListener('click',togglePlay);
+  document.getElementById('btn-reset').addEventListener('click',resetTimer);
+  document.getElementById('btn-repeat').addEventListener('click',resetTimer);
+  document.getElementById('btn-theme').addEventListener('click',toggleTheme);
+
+  buildQueue();
+  updateUI();
+})();
 </script>
 </body>
 </html>
