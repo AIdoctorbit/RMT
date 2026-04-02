@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Road Book: La Ruta del Silencio</title>
+    <title>Road Book: La Ruta del Silenci</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -19,7 +19,7 @@
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
         h1, h2, .font-moto { font-family: 'Orbitron', sans-serif; }
 
-        #map { height: 400px; width: 100%; border-radius: 0 0 16px 16px; z-index: 1; }
+        #map { height: 450px; width: 100%; border-radius: 0 0 16px 16px; z-index: 1; }
         
         .glass-card {
             background: rgba(30, 41, 59, 0.7);
@@ -27,18 +27,19 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Ajust per evitar que el punt tapi les lletres */
         .step-indicator {
             position: absolute;
-            left: -9px;
-            top: 24px;
+            left: -41px; /* Corregit: pl-8 (32px) + meitat de l'amplada del punt (9px) */
+            top: 10px;   /* Ajustat per alinear-se millor amb la primera línia de text */
             width: 18px;
             height: 18px;
             border-radius: 50%;
             background: var(--silent-orange);
             border: 4px solid #0f172a;
+            z-index: 10;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
@@ -54,21 +55,22 @@
         <div class="max-w-5xl mx-auto relative z-10">
             <div class="flex items-center gap-3 mb-2">
                 <span class="h-1 w-12 bg-orange-500"></span>
-                <span class="text-orange-500 font-bold tracking-widest text-sm uppercase">Road Book Correcamins Fiu-Fiu</span>
+                <span class="text-orange-500 font-bold tracking-widest text-sm uppercase">Road Book Oficial</span>
+                <span class="text-orange-500 font-bold tracking-widest text-sm uppercase">Correcamins Fiu-Fiu</span>
             </div>
-            <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-4">SILENT ROUTE <span class="text-orange-500">EXPERIENCE</span></h1>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-4 uppercase">LA RUTA DEL <span class="text-orange-500">SILENCI</span></h1>
             <div class="flex flex-wrap gap-4 text-sm">
-                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2">
+                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2 border border-slate-700">
                     <span class="text-slate-400 uppercase text-[10px] font-bold">Total</span>
-                    <span class="font-moto">485 KM</span>
+                    <span class="font-moto tracking-widest">485 KM</span>
                 </div>
-                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2">
-                    <span class="text-slate-400 uppercase text-[10px] font-bold">Días</span>
-                    <span class="font-moto text-orange-500">03</span>
+                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2 border border-slate-700">
+                    <span class="text-slate-400 uppercase text-[10px] font-bold">Dies</span>
+                    <span class="font-moto text-orange-500 tracking-widest">03</span>
                 </div>
-                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2">
+                <div class="glass-card px-4 py-2 rounded-lg flex items-center gap-2 border border-slate-700">
                     <span class="text-slate-400 uppercase text-[10px] font-bold">Origen</span>
-                    <span class="font-moto">Miami Platja</span>
+                    <span class="font-moto tracking-widest">Miami Platja</span>
                 </div>
             </div>
         </div>
@@ -76,155 +78,155 @@
 
     <main class="max-w-6xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- MAPA (Sticky on Desktop) -->
+        <!-- MAPA -->
         <div class="lg:col-span-7 lg:sticky lg:top-8 h-fit">
             <div class="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
                 <div class="p-4 flex justify-between items-center border-b border-slate-700 bg-slate-800/50">
                     <h2 class="text-sm font-bold flex items-center gap-2 uppercase tracking-wider">
                         <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                        Track GPS Interactivo
+                        Mapa de Carreteres i Relleu
                     </h2>
-                    <div class="flex gap-2">
-                        <span class="w-3 h-3 rounded-full bg-blue-500" title="Día 1"></span>
-                        <span class="w-3 h-3 rounded-full bg-orange-500" title="Día 2"></span>
-                        <span class="w-3 h-3 rounded-full bg-green-500" title="Día 3"></span>
+                    <div class="flex gap-3">
+                        <span class="w-3 h-3 rounded-full bg-blue-500" title="Dia 1"></span>
+                        <span class="w-3 h-3 rounded-full bg-orange-500" title="Dia 2"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500" title="Dia 3"></span>
                     </div>
                 </div>
                 <div id="map"></div>
                 <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-blue-500 rounded-full"></div> Matarraña</div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-orange-500 rounded-full"></div> Maestrazgo</div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-green-500 rounded-full"></div> Els Ports</div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-white rounded-full"></div> Base</div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_5px_#3b82f6]"></div> Matarranya</div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_5px_#f97316]"></div> Maestrat</div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_5px_#10b981]"></div> Els Ports</div>
+                    <div class="flex items-center gap-2"><div class="w-2 h-2 bg-white rounded-full"></div> Miami Platja</div>
                 </div>
             </div>
 
-            <!-- Survival Tips -->
+            <!-- Consells -->
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="glass-card p-5 rounded-xl border-l-4 border-yellow-500">
-                    <h4 class="text-yellow-500 font-bold text-xs uppercase mb-2">Aviso Combustible</h4>
-                    <p class="text-sm text-slate-300">Entre Alcañiz y Cantavieja (70km) no hay gasolineras. **REPOSTA SIEMPRE** en Alcañiz antes de entrar en la Silent Route.</p>
+                    <h4 class="text-yellow-500 font-bold text-xs uppercase mb-2">Benzina i Avituallament</h4>
+                    <p class="text-sm text-slate-300">Entre Alcanyís i Cantavella (70km) **NO hi ha benzineres**. Omple el dipòsit abans d'entrar a la A-1702.</p>
                 </div>
                 <div class="glass-card p-5 rounded-xl border-l-4 border-blue-400">
-                    <h4 class="text-blue-400 font-bold text-xs uppercase mb-2">Climatología</h4>
-                    <p class="text-sm text-slate-300">La ruta sube hasta los 1.400m. La temperatura puede bajar 10 grados respecto a Miami Platja.</p>
+                    <h4 class="text-blue-400 font-bold text-xs uppercase mb-2">Estat de la Carretera</h4>
+                    <p class="text-sm text-slate-300">Carreteres de muntanya estretes. Atenció a les cabres salvatges i possibles pedres a la calçada.</p>
                 </div>
             </div>
         </div>
 
-        <!-- ROADBOOK DETAILS -->
-        <div class="lg:col-span-5 space-y-10">
+        <!-- ROADBOOK -->
+        <div class="lg:col-span-5 space-y-12">
             
-            <!-- DAY 1 -->
+            <!-- DIA 1 -->
             <section>
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="bg-blue-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-900/20">01</div>
+                    <div class="bg-blue-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-900/40">01</div>
                     <div>
-                        <h3 class="text-xl font-bold">MIAMI PLATJA > VALDERROBRES</h3>
-                        <p class="text-xs text-blue-400 font-bold uppercase tracking-widest">Etapa de Aproximación · 145 KM</p>
+                        <h3 class="text-xl font-bold uppercase">De la Costa a la Matarranya</h3>
+                        <p class="text-xs text-blue-400 font-bold uppercase tracking-widest">Etapa 1 · 145 KM</p>
                     </div>
                 </div>
                 
-                <div class="ml-6 border-l-2 border-slate-700 space-y-8 pl-8 relative">
+                <div class="ml-6 border-l-2 border-slate-700 space-y-10 pl-8 relative">
                     <div class="relative">
-                        <div class="step-indicator bg-blue-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 0</p>
-                        <h4 class="font-bold text-slate-200">Miami Platja - Start</h4>
-                        <p class="text-sm text-slate-400">Salida por N-340 / A-7 dirección Reus para enlazar con la N-420.</p>
+                        <div class="step-indicator bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 0</p>
+                        <h4 class="font-bold text-slate-200">Sortida: Miami Platja</h4>
+                        <p class="text-sm text-slate-400">Inici per la N-340/A-7 cap a Reus i enllaç amb la N-420 direcció Móra d'Ebre.</p>
                     </div>
                     <div class="relative">
                         <div class="step-indicator bg-slate-600"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 92</p>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 92</p>
                         <h4 class="font-bold text-slate-200">Gandesa</h4>
-                        <p class="text-sm text-slate-400">Cuna del vino de la Terra Alta. Buen punto para un café rápido.</p>
+                        <p class="text-sm text-slate-400">Cor de la Terra Alta. Pas obligat cap a terres aragoneses per carreteres ràpides.</p>
                     </div>
                     <div class="relative">
                         <div class="step-indicator bg-slate-600"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 115</p>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 115</p>
                         <h4 class="font-bold text-slate-200">Horta de Sant Joan</h4>
-                        <p class="text-sm text-slate-400">Pueblo precioso. Curvas divertidas cruzando el río Algars hacia Aragón.</p>
+                        <p class="text-sm text-slate-400">Poble icònic (Picasso). Inicien les corbes més tancades cap a la frontera fluvial.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-blue-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 145</p>
-                        <h4 class="font-bold text-blue-400">Valderrobres (Meta)</h4>
-                        <p class="text-sm text-slate-400 italic">Dormir en la Matarraña. Imprescindible cena en el casco antiguo.</p>
+                        <div class="step-indicator bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 145</p>
+                        <h4 class="font-bold text-blue-400">Vall-de-roures</h4>
+                        <p class="text-sm text-slate-400">Arribada i pernoctació. Visita obligada al pont medieval i el castell al capvespre.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- DAY 2 -->
+            <!-- DIA 2 -->
             <section>
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="bg-orange-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-orange-900/20">02</div>
+                    <div class="bg-orange-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-orange-900/40">02</div>
                     <div>
-                        <h3 class="text-xl font-bold text-orange-500">EL CORAZÓN DEL SILENCIO</h3>
+                        <h3 class="text-xl font-bold text-orange-500 uppercase">El Cor del Silenci</h3>
                         <p class="text-xs text-orange-400 font-bold uppercase tracking-widest">The Silent Route (A-1702) · 160 KM</p>
                     </div>
                 </div>
                 
-                <div class="ml-6 border-l-2 border-slate-700 space-y-8 pl-8 relative">
+                <div class="ml-6 border-l-2 border-slate-700 space-y-10 pl-8 relative">
                     <div class="relative">
-                        <div class="step-indicator bg-orange-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 40 (D2)</p>
-                        <h4 class="font-bold text-slate-200">Alcañiz - REPOSTAJE</h4>
-                        <p class="text-sm text-orange-200/70 font-bold">⚠️ ÚLTIMA GASOLINERA ANTES DE LA RUTA.</p>
+                        <div class="step-indicator bg-orange-500 shadow-[0_0_8px_#f97316]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 40 (D2)</p>
+                        <h4 class="font-bold text-slate-200 uppercase">Alcanyís - ÚLTIMA BENZINERA</h4>
+                        <p class="text-sm text-orange-200/80 font-bold">⚠️ Omple aquí. No trobaràs benzina fins al final de l'etapa.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-orange-600"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 72 (D2)</p>
-                        <h4 class="font-bold text-slate-200 uppercase">Inicio A-1702 (Ejulve)</h4>
-                        <p class="text-sm text-slate-400 italic text-xs">"Bienvenidos al territorio donde el tiempo se detiene".</p>
+                        <div class="step-indicator bg-orange-600 shadow-[0_0_8px_#f97316]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 72 (D2)</p>
+                        <h4 class="font-bold text-slate-200 uppercase">Ejulve: Inici de la Ruta</h4>
+                        <p class="text-sm text-slate-400 italic">Entrada a la A-1702. Atenció al cartell oficial per a la foto.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-white"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 88 (D2)</p>
-                        <h4 class="font-bold text-slate-200">Órganos de Montoro</h4>
-                        <p class="text-sm text-slate-400">Mirador espectacular. Curvas de herradura técnicas.</p>
+                        <div class="step-indicator bg-white shadow-[0_0_8px_#fff]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 88 (D2)</p>
+                        <h4 class="font-bold text-slate-200 uppercase">Òrgans de Montoro</h4>
+                        <p class="text-sm text-slate-400">Mirador geològic impressionant. Tram molt tècnic i revirat.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-white"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 105 (D2)</p>
-                        <h4 class="font-bold text-slate-200">The Silent Man (Estatua)</h4>
-                        <p class="text-sm text-slate-400">Foto obligada. Ubicada en un pequeño ensanche tras una subida fuerte.</p>
+                        <div class="step-indicator bg-white shadow-[0_0_8px_#fff]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 105 (D2)</p>
+                        <h4 class="font-bold text-slate-200 uppercase">The Silent Man</h4>
+                        <p class="text-sm text-slate-400">L'estàtua del motorista solitari. Punt de trobada de tota la comunitat.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-orange-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 160 (D2)</p>
-                        <h4 class="font-bold text-orange-400">Cantavieja (Meta)</h4>
-                        <p class="text-sm text-slate-400">Uno de los pueblos más altos de España. Noche de paz absoluta.</p>
+                        <div class="step-indicator bg-orange-500 shadow-[0_0_8px_#f97316]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 160 (D2)</p>
+                        <h4 class="font-bold text-orange-400">Cantavella</h4>
+                        <p class="text-sm text-slate-400">Capital del Maestrat. Final d'etapa a 1.300 metres d'altitud.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- DAY 3 -->
+            <!-- DIA 3 -->
             <section>
                 <div class="flex items-center gap-4 mb-6">
-                    <div class="bg-green-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-green-900/20">03</div>
+                    <div class="bg-green-600 text-white w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-green-900/40">03</div>
                     <div>
-                        <h3 class="text-xl font-bold">CASTILLOS Y COSTA</h3>
-                        <p class="text-xs text-green-400 font-bold uppercase tracking-widest">Descenso al Mediterráneo · 180 KM</p>
+                        <h3 class="text-xl font-bold uppercase">Castells i Retorn al Mar</h3>
+                        <p class="text-xs text-green-400 font-bold uppercase tracking-widest">Etapa 3 · 180 KM</p>
                     </div>
                 </div>
                 
-                <div class="ml-6 border-l-2 border-slate-700 space-y-8 pl-8 relative">
+                <div class="ml-6 border-l-2 border-slate-700 space-y-10 pl-8 relative">
                     <div class="relative">
-                        <div class="step-indicator bg-green-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 35 (D3)</p>
+                        <div class="step-indicator bg-green-500 shadow-[0_0_8px_#10b981]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 35 (D3)</p>
                         <h4 class="font-bold text-slate-200">Morella</h4>
-                        <p class="text-sm text-slate-400">Ciudad amurallada. La bajada por la N-232 es pura adrenalina (asfalto nuevo).</p>
+                        <p class="text-sm text-slate-400">Baixada pel Port de Querol (N-232). Asfalt nou i corbes de traçat ample.</p>
                     </div>
                     <div class="relative">
                         <div class="step-indicator bg-slate-600"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 95 (D3)</p>
-                        <h4 class="font-bold text-slate-200">Vinaròs</h4>
-                        <p class="text-sm text-slate-400">Llegada al mar. Cambio de paisaje: de la piedra gris al azul marino.</p>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 95 (D3)</p>
+                        <h4 class="font-bold text-slate-200 uppercase">Vinaròs</h4>
+                        <p class="text-sm text-slate-400">Trobada amb el Mediterrani. Retorn cap al nord vorejant la costa.</p>
                     </div>
                     <div class="relative">
-                        <div class="step-indicator bg-green-500"></div>
-                        <p class="text-xs font-mono text-slate-500">KM 180 (D3)</p>
-                        <h4 class="font-bold text-green-400 underline">Miami Platja - FIN</h4>
-                        <p class="text-sm text-slate-400">Llegada a base por la A-7 / N-340 norte.</p>
+                        <div class="step-indicator bg-green-500 shadow-[0_0_8px_#10b981]"></div>
+                        <p class="text-xs font-mono text-slate-500 italic">KM 180 (D3)</p>
+                        <h4 class="font-bold text-green-400">Arribada: Miami Platja</h4>
+                        <p class="text-sm text-slate-400">Fi del viatge. Sopar de celebració vora la platja.</p>
                     </div>
                 </div>
             </section>
@@ -233,26 +235,26 @@
     </main>
 
     <footer class="mt-20 border-t border-slate-800 pt-10 text-center">
-        <p class="text-slate-500 text-xs font-bold tracking-widest uppercase">Diseñado para amantes de las dos ruedas</p>
-        <div class="flex justify-center gap-4 mt-4 opacity-50">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z"/></svg>
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+        <p class="text-slate-500 text-xs font-bold tracking-widest uppercase mb-4">Viatja amb respecte · Gaudeix del silenci</p>
+        <div class="flex justify-center gap-6 opacity-30">
+            <svg class="w-8 h-8" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <svg class="w-8 h-8" fill="white" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.16.09-.34.14-.5.14s-.34-.05-.5-.14l-7.97-4.44C3.21 17.21 3 16.88 3 16.5v-9c0-.38.21-.71.53-.88l7.97-4.44c.16-.09.34-.14.5-.14s-.34.05-.5.14l7.97 4.44c.32.17.53.5.53.88v9z"/></svg>
         </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar mapa
             const map = L.map('map', {
                 scrollWheelZoom: false
             }).setView([40.75, 0.4], 9);
 
-            // Capa Dark Mode de CartoDB
-            L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            // Capa d'estil "Terrain/Outdoor" (OpenTopoMap) per a un aspecte més real i detallat
+            L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17,
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
             }).addTo(map);
 
-            // Coordenadas
+            // Coordenades del viatge
             const d1 = [
                 [41.0189, 0.9575], // Miami
                 [41.0911, 0.5833], // Mora
@@ -263,35 +265,44 @@
 
             const d2 = [
                 [40.8756, 0.1541], // Valderrobres
-                [41.0494, -0.1332], // Alcañiz
-                [40.8524, -0.5878], // Ejulve (Silent Route start)
+                [41.0494, -0.1332], // Alcaniz
+                [40.8524, -0.5878], // Ejulve
                 [40.7500, -0.5500], // Organos
                 [40.6622, -0.5312], // Villarluengo
-                [40.5255, -0.4045]  // Cantavieja
+                [40.5255, -0.4045]  // Cantavella
             ];
 
             const d3 = [
-                [40.5255, -0.4045], // Cantavieja
+                [40.5255, -0.4045], // Cantavella
                 [40.6186, -0.1009], // Morella
                 [40.4705, 0.4772],  // Vinaròs
                 [41.0189, 0.9575]   // Miami
             ];
 
-            // Líneas de ruta
+            // Trazat de les rutes
             L.polyline(d1, {color: '#3b82f6', weight: 4, opacity: 0.8}).addTo(map);
-            L.polyline(d2, {color: '#f97316', weight: 6, opacity: 1, dashArray: '1, 10'}).addTo(map); // Silent route destacada
+            L.polyline(d2, {color: '#f97316', weight: 6, opacity: 1}).addTo(map); // Destacada
             L.polyline(d3, {color: '#10b981', weight: 4, opacity: 0.8}).addTo(map);
 
-            // Marcadores Personalizados
-            const iconSettings = { iconSize: [12, 12], className: 'rounded-full border-2 border-white shadow-lg' };
-            
-            L.marker([41.0189, 0.9575], { icon: L.divIcon({...iconSettings, className: iconSettings.className + ' bg-white'}) }).addTo(map).bindPopup("Miami Platja (Base)");
-            L.marker([40.8756, 0.1541], { icon: L.divIcon({...iconSettings, className: iconSettings.className + ' bg-blue-500'}) }).addTo(map).bindPopup("Día 1: Valderrobres");
-            L.marker([40.5255, -0.4045], { icon: L.divIcon({...iconSettings, className: iconSettings.className + ' bg-orange-500'}) }).addTo(map).bindPopup("Día 2: Cantavieja");
-            L.marker([40.8524, -0.5878], { icon: L.divIcon({...iconSettings, className: iconSettings.className + ' bg-red-500'}) }).addTo(map).bindPopup("⚠️ ALCAÑIZ: ¡REPOSTA AQUÍ!");
+            // Marcadors
+            const addMarker = (coord, title, color) => {
+                L.circleMarker(coord, {
+                    radius: 6,
+                    fillColor: color,
+                    color: "#fff",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map).bindPopup("<b>" + title + "</b>");
+            };
 
-            // Fit bounds
-            map.fitBounds(L.polyline([...d1, ...d2, ...d3]).getBounds(), {padding: [30, 30]});
+            addMarker([41.0189, 0.9575], "Miami Platja", "#fff");
+            addMarker([40.8756, 0.1541], "Vall-de-roures", "#3b82f6");
+            addMarker([40.5255, -0.4045], "Cantavella", "#f97316");
+            addMarker([40.6186, -0.1009], "Morella", "#10b981");
+            addMarker([40.8524, -0.5878], "ALCANYÍS (Benzinera)", "#ef4444");
+
+            map.fitBounds(L.polyline([...d1, ...d2, ...d3]).getBounds(), {padding: [40, 40]});
         });
     </script>
 </body>
