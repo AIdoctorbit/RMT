@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ca" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rutina Matí">
+<meta name="theme-color" content="#0F6E56">
+<link rel="apple-touch-icon" href="icona.png">
+<title>Rutina Matí</title>
+<style>
+[data-theme="light"]{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--amber:#EF9F27;--text:#1a1a1a;--text2:#666;--bg:#f7f7f5;--card:#fff;--border:#e0e0dc}
+[data-theme="dark"]{--green:#1D9E75;--green-dark:#0F6E56;--green-light:#0F4535;--amber:#EF9F27;--text:#f0f0ee;--text2:#aaa;--bg:#1a1a18;--card:#252523;--border:#333}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;background:var(--bg)}
+body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:background .3s,color .3s}
+.app{display:flex;flex-direction:column;min-height:100dvh;padding:env(safe-area-inset-top,16px) 16px calc(env(safe-area-inset-bottom,16px) + 16px) 16px}
+.header{padding:12px 0 8px;text-align:center;flex-shrink:0;position:relative}
+.header h1{font-size:17px;font-weight:600;letter-spacing:-.3px;color:var(--text)}
+.header p{font-size:13px;color:var(--text2);margin-top:2px}
+.btn-theme{position:absolute;right:0;top:10px;background:none;border:1px solid var(--border);border-radius:10px;padding:5px 9px;font-size:16px;cursor:pointer;line-height:1;color:var(--text)}
+.total-bar-wrap{margin-bottom:12px;flex-shrink:0}
+.total-label{font-size:12px;color:var(--text2);display:flex;justify-content:space-between;margin-bottom:5px}
+.total-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.total-fill{height:100%;background:var(--green);border-radius:3px;transition:width 1s linear}
+.act-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;text-align:center;flex-shrink:0;transition:background .3s,border-color .3s}
+.act-emoji{font-size:40px;margin-bottom:8px;display:block}
+.act-name{font-size:22px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
+.act-dur-label{font-size:14px;color:var(--text2);margin-top:2px}
+.countdown{font-size:72px;font-weight:700;letter-spacing:-3px;margin:16px 0;font-variant-numeric:tabular-nums;color:var(--text)}
+.countdown.warn{color:var(--amber)}
+.act-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-bottom:12px}
+.act-fill{height:100%;background:var(--green);border-radius:5px;transition:width 1s linear}
+.act-fill.warn{background:var(--amber)}
+.next-label{font-size:13px;color:var(--text2)}
+.next-label span{color:var(--text);font-weight:500}
+.alert-banner{background:rgba(239,159,39,.15);border:1px solid rgba(239,159,39,.4);border-radius:12px;padding:10px 14px;font-size:14px;color:#BA7517;margin-bottom:12px;text-align:center;transition:opacity .4s;opacity:0;pointer-events:none;flex-shrink:0}
+.alert-banner.show{opacity:1}
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-shrink:0}
+.btn{flex:1;padding:14px;border-radius:14px;font-size:16px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:transform .1s,background .3s,color .3s}
+.btn:active{transform:scale(0.97)}
+.btn-play{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-play.paused{background:var(--green-dark);border-color:var(--green-dark)}
+.queue{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
+.q-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;font-size:15px;background:var(--card);border:1px solid var(--border);transition:opacity .3s,background .3s,border-color .3s;color:var(--text)}
+.q-row.done-row{opacity:.3;text-decoration:line-through}
+.q-row.active-row{background:var(--green-light);border-color:var(--green);font-weight:600}
+.q-row.next-row{opacity:.7}
+.q-row.future-row{opacity:.45}
+.q-dur{margin-left:auto;color:var(--text2);font-size:13px;font-weight:400}
+.done-screen{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px;padding:2rem 0}
+.done-screen .check{font-size:64px}
+.done-screen h2{font-size:26px;font-weight:700;color:var(--text)}
+.done-screen p{color:var(--text2);font-size:15px}
+
+/* iOS audio warning */
+.ios-hint{background:rgba(29,158,117,.1);border:1px solid rgba(29,158,117,.3);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--green-dark);margin-bottom:12px;text-align:center;flex-shrink:0;display:none}
+[data-theme="dark"] .ios-hint{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Rutina Matí</h1>
+    <p>60 minuts · 8 activitats</p>
+    <button class="btn-theme" id="btn-theme">🌙</button>
+  </div>
+
+  <div id="main-ui">
+    <div id="ios-hint" class="ios-hint">🔔 Prem <strong>Iniciar</strong> per activar l'àudio a iOS</div>
+    <div id="alert-banner" class="alert-banner">⏳ Pròxima activitat en 30 segons</div>
+    <div class="total-bar-wrap">
+      <div class="total-label"><span>Progrés</span><span id="elapsed-label">0 / 60 min</span></div>
+      <div class="total-bar"><div class="total-fill" id="total-fill" style="width:0%"></div></div>
+    </div>
+    <div class="act-card">
+      <span class="act-emoji" id="cur-icon">☀️</span>
+      <div class="act-name" id="cur-name">—</div>
+      <div class="act-dur-label" id="cur-dur">—</div>
+      <div class="countdown" id="countdown">--:--</div>
+      <div class="act-bar"><div class="act-fill" id="act-fill" style="width:0%"></div></div>
+      <div class="next-label" id="next-info"></div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-play" id="btn-play">Iniciar</button>
+      <button class="btn" id="btn-reset">Reiniciar</button>
+    </div>
+    <div class="queue" id="queue"></div>
+  </div>
+
+  <div class="done-screen" id="done-screen">
+    <div class="check">✅</div>
+    <h2>Rutina completada!</h2>
+    <p>Has acabat la teva primera hora del dia</p>
+    <button class="btn btn-play" id="btn-repeat" style="width:100%;margin-top:8px">Tornar a començar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var acts=[
+    {name:'Despertar',dur:2,icon:'☀️'},
+    {name:'Exercici',dur:5,icon:'🏃'},
+    {name:'Dutxa / WC',dur:20,icon:'🚿'},
+    {name:'Vestir-me',dur:5,icon:'👕'},
+    {name:'Preparar esmorzar',dur:5,icon:'🥣'},
+    {name:'Esmorzar',dur:15,icon:'☕'},
+    {name:'Dents',dur:2,icon:'🪥'},
+    {name:'Sortida',dur:6,icon:'🚪'}
+  ];
+  var totalSecs=3600,curIdx=0,secsLeft=acts[0].dur*60,totalElapsed=0,running=false,interval=null,warnedThisAct=false,darkMode=false;
+  var audioCtx=null,audioUnlocked=false;
+
+  // ── Detectar iOS ──────────────────────────────────────────────────
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  if(isIOS) document.getElementById('ios-hint').style.display='block';
+
+  // ── AudioContext: crear només un cop i reutilitzar ────────────────
+  function getAudioCtx(){
+    if(!audioCtx){
+      audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    }
+    // iOS requereix resume() després de qualsevol interrupció
+    if(audioCtx.state==='suspended'||audioCtx.state==='interrupted'){
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  // Desbloqueja l'àudio amb un so silenciós en el primer tap
+  function unlockAudio(){
+    if(audioUnlocked) return;
+    try{
+      var ctx=getAudioCtx();
+      var buf=ctx.createBuffer(1,1,22050);
+      var src=ctx.createBufferSource();
+      src.buffer=buf;src.connect(ctx.destination);
+      src.start(0);
+      audioUnlocked=true;
+      if(isIOS) document.getElementById('ios-hint').style.display='none';
+    }catch(e){}
+  }
+
+  // Reactivar àudio quan la pàgina torna al primer pla
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden && audioCtx){
+      audioCtx.resume();
+    }
+  });
+  // Event addicional per a iOS PWA (pageshow)
+  window.addEventListener('pageshow',function(){
+    if(audioCtx) audioCtx.resume();
+  });
+  // Focus també ajuda
+  window.addEventListener('focus',function(){
+    if(audioCtx) audioCtx.resume();
+  });
+
+  function beep(freq,dur,vol,delay){
+    try{
+      var ctx=getAudioCtx();
+      if(ctx.state==='suspended') return; // Silenci segur si no s'ha desblocat
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';o.frequency.value=freq;
+      var t=ctx.currentTime+(delay||0);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol||0.3,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.start(t);
+      o.stop(t+dur+0.05);
+    }catch(e){}
+  }
+  function beepWarn(){beep(880,.18,.25,0);beep(880,.18,.25,.28);}
+  function beepChange(){beep(1046,.12,.3,0);beep(1318,.12,.3,.16);beep(1568,.25,.3,.32);}
+  function beepDone(){beep(1046,.15,.3,0);beep(1318,.15,.3,.18);beep(1568,.15,.3,.36);beep(2093,.4,.3,.55);}
+
+  // ── Temporitzador robust: compensació de deriva ───────────────────
+  var tickOrigin=null,tickBase=0;
+
+  function fmt(s){return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+(s%60)).slice(-2);}
+
+  function buildQueue(){
+    document.getElementById('queue').innerHTML=acts.map(function(a,i){
+      return '<div class="q-row" id="qr-'+i+'"><span style="font-size:20px">'+a.icon+'</span><span>'+a.name+'</span><span class="q-dur">'+a.dur+' min</span></div>';
+    }).join('');
+  }
+  function updateQueue(){
+    acts.forEach(function(_,i){
+      var r=document.getElementById('qr-'+i);
+      r.className='q-row '+(i<curIdx?'done-row':i===curIdx?'active-row':i===curIdx+1?'next-row':'future-row');
+    });
+  }
+  function showAlert(msg){
+    var b=document.getElementById('alert-banner');
+    b.textContent=msg;b.classList.add('show');
+    clearTimeout(b._t);b._t=setTimeout(function(){b.classList.remove('show');},4500);
+  }
+  function updateUI(){
+    if(curIdx>=acts.length)return;
+    var a=acts[curIdx],dur=a.dur*60,pct=((dur-secsLeft)/dur)*100;
+    document.getElementById('cur-icon').textContent=a.icon;
+    document.getElementById('cur-name').textContent=a.name;
+    document.getElementById('cur-dur').textContent=a.dur+' minuts';
+    var cd=document.getElementById('countdown');
+    cd.textContent=fmt(secsLeft);
+    cd.className='countdown'+(secsLeft<=30?' warn':'');
+    var fill=document.getElementById('act-fill');
+    fill.style.width=pct+'%';fill.className='act-fill'+(secsLeft<=30?' warn':'');
+    document.getElementById('total-fill').style.width=(totalElapsed/totalSecs*100)+'%';
+    document.getElementById('elapsed-label').textContent=Math.floor(totalElapsed/60)+' / 60 min';
+    var ni=document.getElementById('next-info');
+    ni.innerHTML=curIdx+1<acts.length?'Següent: <span>'+acts[curIdx+1].icon+' '+acts[curIdx+1].name+'</span>':'<span>Última activitat</span>';
+    updateQueue();
+  }
+
+  // Tick amb compensació de deriva (drift-corrected)
+  function scheduleTick(){
+    if(!running) return;
+    var now=Date.now();
+    var elapsed=Math.round((now-tickOrigin)/1000); // segons reals transcorreguts
+    var delta=elapsed-tickBase;                     // quants ticks han passat
+    if(delta<1){
+      // Encara no toca; tornar a programar per quan toca
+      var nextMs=1000-(now-tickOrigin)%1000;
+      interval=setTimeout(scheduleTick,nextMs);
+      return;
+    }
+    // Processa tots els ticks pendents (si el dispositiu ha dormit)
+    for(var i=0;i<delta;i++){
+      tickBase++;
+      secsLeft--;totalElapsed++;
+      if(secsLeft===30&&!warnedThisAct&&curIdx+1<acts.length){
+        warnedThisAct=true;beepWarn();
+        showAlert('⏳ '+acts[curIdx+1].icon+' '+acts[curIdx+1].name+' en 30 segons');
+      }
+      if(secsLeft<=0){
+        curIdx++;
+        if(curIdx>=acts.length){finish();return;}
+        secsLeft=acts[curIdx].dur*60;warnedThisAct=false;
+        beepChange();showAlert('▶ Ara: '+acts[curIdx].icon+' '+acts[curIdx].name);
+      }
+    }
+    updateUI();
+    // Programa el proper tick exactament quan toca
+    var nextMs=1000-(Date.now()-tickOrigin)%1000;
+    interval=setTimeout(scheduleTick,nextMs||1000);
+  }
+
+  function finish(){
+    running=false;clearTimeout(interval);interval=null;
+    beepDone();
+    document.getElementById('main-ui').style.display='none';
+    document.getElementById('done-screen').style.display='flex';
+  }
+  function togglePlay(){
+    unlockAudio(); // CRÍTICA: desbloqueja àudio en el tap de l'usuari
+    if(!running){
+      running=true;
+      tickOrigin=Date.now()-tickBase*1000;
+      document.getElementById('btn-play').textContent='Pausar';
+      document.getElementById('btn-play').classList.add('paused');
+      clearTimeout(interval);
+      scheduleTick();
+    } else {
+      running=false;clearTimeout(interval);interval=null;
+      document.getElementById('btn-play').textContent='Continuar';
+      document.getElementById('btn-play').classList.remove('paused');
+    }
+  }
+  function resetTimer(){
+    running=false;clearTimeout(interval);interval=null;
+    curIdx=0;secsLeft=acts[0].dur*60;totalElapsed=0;warnedThisAct=false;tickBase=0;tickOrigin=null;
+    document.getElementById('btn-play').textContent='Iniciar';
+    document.getElementById('btn-play').classList.remove('paused');
+    document.getElementById('main-ui').style.display='block';
+    document.getElementById('done-screen').style.display='none';
+    document.getElementById('alert-banner').classList.remove('show');
+    if(isIOS) document.getElementById('ios-hint').style.display='block';
+    buildQueue();updateUI();
+  }
+  function toggleTheme(){
+    darkMode=!darkMode;
+    document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+    document.getElementById('btn-theme').textContent=darkMode?'☀️':'🌙';
+  }
+
+  document.getElementById('btn-play').addEventListener('click',togglePlay);
+  document.getElementById('btn-reset').addEventListener('click',resetTimer);
+  document.getElementById('btn-repeat').addEventListener('click',function(){unlockAudio();resetTimer();});
+  document.getElementById('btn-theme').addEventListener('click',toggleTheme);
+
+  buildQueue();
+  updateUI();
+})();
+</script>
+</body>
+</html>
